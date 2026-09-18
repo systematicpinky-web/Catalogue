@@ -28,12 +28,46 @@ function findUserByUsername_(username) {
   return null;
 }
 
+// The web app is deployed with "Anyone" access, so the login action is reachable by anyone
+// with the URL. Without a limit, the short SHA-256 hashes here would be brute-forceable at
+// request speed. Lock an account out for a while after repeated failures.
+var MAX_LOGIN_ATTEMPTS = 5;
+var LOCKOUT_SECONDS = 15 * 60;
+
+function attemptKey_(username) {
+  return 'login_attempts_' + String(username || '').toLowerCase();
+}
+
+function recordFailedLogin_(username) {
+  var cache = CacheService.getScriptCache();
+  var key = attemptKey_(username);
+  var count = Number(cache.get(key) || 0) + 1;
+  cache.put(key, String(count), LOCKOUT_SECONDS);
+}
+
+function assertNotLockedOut_(username) {
+  var count = Number(CacheService.getScriptCache().get(attemptKey_(username)) || 0);
+  if (count >= MAX_LOGIN_ATTEMPTS) {
+    throw new ApiError_('TOO_MANY_ATTEMPTS', 'Too many failed attempts. Try again in 15 minutes.');
+  }
+}
+
 function login_(payload) {
+  assertNotLockedOut_(payload.username);
+
   var user = findUserByUsername_(payload.username);
-  if (!user || user.active === false) throw new ApiError_('INVALID_CREDENTIALS', 'Invalid username or password');
+  if (!user || user.active === false) {
+    recordFailedLogin_(payload.username);
+    throw new ApiError_('INVALID_CREDENTIALS', 'Invalid username or password');
+  }
 
   var hash = hashPassword_(payload.password, user.salt);
-  if (hash !== user.passwordHash) throw new ApiError_('INVALID_CREDENTIALS', 'Invalid username or password');
+  if (hash !== user.passwordHash) {
+    recordFailedLogin_(payload.username);
+    throw new ApiError_('INVALID_CREDENTIALS', 'Invalid username or password');
+  }
+
+  CacheService.getScriptCache().remove(attemptKey_(payload.username));
 
   var token = Utilities.getUuid();
   var session = { username: user.username, role: user.role, displayName: user.displayName };

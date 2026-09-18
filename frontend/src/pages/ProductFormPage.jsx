@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getProduct, addProduct, updateProduct } from '../api/products';
 import ImageUpload from '../components/ImageUpload';
+import { clearProductsCache } from '../state/productsCache';
 
 const emptyForm = { name: '', category: '', description: '', quantity: 0, value: 0 };
 
@@ -49,6 +50,7 @@ export default function ProductFormPage() {
       const saved = isEdit
         ? await updateProduct(session.token, id, payload)
         : await addProduct(session.token, payload);
+      clearProductsCache();
       navigate(`/products/${saved.id}`);
     } catch (err) {
       setError(err.message || 'Could not save product');
@@ -58,45 +60,51 @@ export default function ProductFormPage() {
   }
 
   return (
-    <form className="product-form" onSubmit={handleSubmit}>
-      <h1>{isEdit ? 'Edit product' : 'Add product'}</h1>
+    <div className="product-form-page">
+      <Link to={isEdit ? `/products/${id}` : '/'} className="back-link">← Back</Link>
+      <form className="product-form" onSubmit={handleSubmit}>
+        <h1>{isEdit ? 'Edit product' : 'Add product'}</h1>
 
-      <label>
-        Name
-        <input value={form.name} onChange={(e) => setField('name', e.target.value)} required />
-      </label>
-      <label>
-        Category
-        <input value={form.category} onChange={(e) => setField('category', e.target.value)} />
-      </label>
-      <label>
-        Description
-        <textarea value={form.description} onChange={(e) => setField('description', e.target.value)} rows={4} />
-      </label>
-      <label>
-        Quantity
-        <input
-          type="number"
-          value={form.quantity}
-          onChange={(e) => setField('quantity', Number(e.target.value))}
-        />
-      </label>
-      <label>
-        Value
-        <input
-          type="number"
-          step="0.01"
-          value={form.value}
-          onChange={(e) => setField('value', Number(e.target.value))}
-        />
-      </label>
+        <label>
+          Name
+          <input value={form.name} onChange={(e) => setField('name', e.target.value)} required />
+        </label>
+        <label>
+          Category
+          <input value={form.category} onChange={(e) => setField('category', e.target.value)} />
+        </label>
+        <label>
+          Description
+          <textarea value={form.description} onChange={(e) => setField('description', e.target.value)} rows={4} />
+        </label>
 
-      <ImageUpload currentImageUrl={existingImageUrl} onImageReady={setPendingImage} />
+        <div className="form-row">
+          <label>
+            Quantity
+            <input
+              type="number"
+              value={form.quantity}
+              onChange={(e) => setField('quantity', Number(e.target.value))}
+            />
+          </label>
+          <label>
+            Value
+            <input
+              type="number"
+              step="0.01"
+              value={form.value}
+              onChange={(e) => setField('value', Number(e.target.value))}
+            />
+          </label>
+        </div>
 
-      {error && <p className="form-error">{error}</p>}
-      <button type="submit" className="btn btn-primary" disabled={submitting}>
-        {submitting ? 'Saving...' : 'Save'}
-      </button>
-    </form>
+        <ImageUpload currentImageUrl={existingImageUrl} onImageReady={setPendingImage} />
+
+        {error && <p className="form-error">{error}</p>}
+        <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
+          {submitting ? 'Saving…' : 'Save product'}
+        </button>
+      </form>
+    </div>
   );
 }

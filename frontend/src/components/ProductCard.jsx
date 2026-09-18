@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
+import ProductImage from './ProductImage';
+import { imageSrc } from '../utils/driveImage';
 
 export default function ProductCard({ product }) {
   return (
     <Link to={`/products/${product.id}`} className="product-card">
       <div className="product-card-image">
-        {product.imageUrl ? (
-          <img src={product.imageUrl} alt={product.name} loading="lazy" />
-        ) : (
-          <div className="product-card-placeholder">No photo</div>
-        )}
+        <ProductImage
+          src={imageSrc(product.imageUrl, 400)}
+          alt={product.name}
+          placeholderClassName="product-card-placeholder"
+        />
       </div>
       <div className="product-card-body">
         <h3>{product.name}</h3>

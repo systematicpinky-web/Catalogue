@@ -1,118 +1,320 @@
 :root {
-  --color-bg: #f7f7f8;
-  --color-surface: #ffffff;
-  --color-border: #e0e0e3;
-  --color-text: #1c1c1f;
-  --color-muted: #6b6b70;
-  --color-primary: #2f5fed;
-  --color-danger: #d92d20;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Beige carries the interface; pink appears only where something is active or primary. */
+  --color-bg: #ece1cf;
+  --color-surface: #f8f2e8;
+  --color-surface-alt: #e4d8c3;
+  --color-border: #d8c9b0;
+  --color-border-strong: #c3b096;
+
+  /* Deliberately dark for contrast against beige — mid-tone greys wash out on this bg. */
+  --color-text: #241d18;
+  --color-muted: #6b5d4d;
+
+  --color-primary: #b3164f;
+  --color-primary-dark: #8d0f3d;
+  --color-primary-soft: #f3dfe7;
+  --color-primary-contrast: #ffffff;
+
+  --color-danger: #a32a1e;
+  --color-danger-soft: #f2dedb;
+
+  --shadow-sm: 0 1px 2px rgba(36, 29, 24, 0.05);
+  --shadow-md: 0 6px 20px rgba(36, 29, 24, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  font-family: var(--font-body);
   color-scheme: light;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
 }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+a {
+  color: var(--color-primary);
+}
+
+/* ---------- Logo ---------- */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.logo-mark {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: 1.3rem;
+  letter-spacing: 0.01em;
+}
+
+.logo-lg .logo-mark {
+  width: 1.5em;
+  height: 1.3em;
+}
+
+.logo-lg .logo-text {
+  font-size: 2rem;
+}
+
+/* ---------- Navbar ---------- */
 
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 16px 28px;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .navbar-brand {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--color-text);
   text-decoration: none;
+  transition: opacity 0.12s ease;
+}
+
+.navbar-brand:hover {
+  opacity: 0.75;
 }
 
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .navbar-user {
   color: var(--color-muted);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.btn-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  margin-right: 6px;
 }
 
 .app-content {
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 36px 24px 72px;
 }
 
+/* ---------- Buttons ---------- */
+
 .btn {
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.89rem;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.btn:hover {
+  background: var(--color-surface-alt);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .btn-primary {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: white;
+  color: var(--color-primary-contrast);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
 }
 
 .btn-danger {
-  background: var(--color-danger);
+  background: transparent;
   border-color: var(--color-danger);
-  color: white;
+  color: var(--color-danger);
 }
 
-.toolbar {
+.btn-danger:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+  padding: 11px 16px;
+  font-size: 0.95rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ---------- Filter bar ---------- */
+
+.product-list-page {
+  animation: page-enter 0.22s ease both;
+}
+
+.filter-bar {
   display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.search-bar, .category-filter {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
+.filter-row {
+  display: flex;
+  gap: 10px;
+}
+
+.search-bar, .sort-select {
+  padding: 10px 13px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
   font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
-.search-bar { flex: 1; }
+.search-bar {
+  flex: 1;
+}
+
+.search-bar::placeholder {
+  color: var(--color-muted);
+}
+
+.search-bar:focus, .sort-select:focus,
+.product-form input:focus, .product-form textarea:focus, .login-form input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.pill:hover {
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+
+.pill-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.filter-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+/* ---------- Product grid ---------- */
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 20px;
 }
 
 .product-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   text-decoration: none;
   color: var(--color-text);
   display: block;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.product-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-md);
 }
 
 .product-card-image {
-  aspect-ratio: 4 / 3;
-  background: var(--color-bg);
+  aspect-ratio: 1 / 1;
+  background: var(--color-surface-alt);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .product-card-image img {
@@ -127,108 +329,323 @@ body {
 }
 
 .product-card-body {
-  padding: 12px;
+  padding: 14px 15px 16px;
 }
 
 .product-card-body h3 {
-  margin: 0 0 6px;
-  font-size: 1rem;
+  margin: 0 0 9px;
+  font-size: 1.02rem;
+  line-height: 1.3;
 }
 
 .product-card-meta {
   color: var(--color-muted);
-  font-size: 0.85rem;
-  margin: 6px 0 0;
+  font-size: 0.83rem;
+  font-weight: 500;
+  margin: 9px 0 0;
 }
 
 .badge {
   display: inline-block;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
   border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 0.75rem;
+  padding: 3px 11px;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.empty-state {
+  color: var(--color-muted);
+  text-align: center;
+  padding: 56px 0;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* ---------- Images ---------- */
+
+.img-fade {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.img-loaded {
+  opacity: 1;
+}
+
+/* ---------- Skeleton loading ---------- */
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-alt);
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  margin-top: 9px;
+}
+
+/* ---------- Loading / error states ---------- */
+
+.loading-spinner-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 64px 0;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+.loading-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-primary);
+  animation: spin 0.7s linear infinite;
+}
+
+.error-state {
+  text-align: center;
+  padding: 56px 20px;
   color: var(--color-muted);
 }
 
-.login-page {
-  display: flex;
-  justify-content: center;
-  padding-top: 80px;
+.error-state h2 {
+  margin-bottom: 8px;
 }
 
-.login-form, .product-form {
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Login ---------- */
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 16px;
+}
+
+.login-panel {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 10px;
-  padding: 24px;
+  border-radius: var(--radius-lg);
+  max-width: 390px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.login-panel-decor {
+  height: 3px;
+  background: var(--color-primary);
+}
+
+.login-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  max-width: 420px;
-  width: 100%;
+  gap: 17px;
+  padding: 38px 34px 34px;
+}
+
+.login-logo {
+  display: flex;
+  justify-content: center;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+  margin: -4px 0 10px;
 }
 
 .login-form label, .product-form label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--color-muted);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .login-form input, .product-form input, .product-form textarea {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
+  padding: 10px 13px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
   font-size: 0.95rem;
   font-family: inherit;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .form-error {
   color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
   font-size: 0.85rem;
+  font-weight: 500;
   margin: 0;
+}
+
+/* ---------- Product form ---------- */
+
+.product-form-page {
+  max-width: 500px;
+  animation: page-enter 0.22s ease both;
+}
+
+.form-row {
+  display: flex;
+  gap: 14px;
+}
+
+.form-row label {
+  flex: 1;
+}
+
+.product-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  width: 100%;
+}
+
+.product-form h1 {
+  margin: 0 0 4px;
+  font-size: 1.6rem;
 }
 
 .image-upload {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .image-upload-preview {
-  max-width: 200px;
-  border-radius: 8px;
+  max-width: 180px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
 }
 
+/* ---------- Product detail ---------- */
+
 .product-detail-page {
-  max-width: 600px;
+  max-width: 640px;
+  animation: page-enter 0.22s ease both;
+}
+
+.product-detail-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
 .product-detail-image {
   width: 100%;
-  max-width: 400px;
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
   display: block;
-  margin-bottom: 16px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.product-detail-image-zoom {
+  cursor: zoom-in;
+}
+
+.product-detail-placeholder {
+  aspect-ratio: 4 / 3;
+  background: var(--color-surface-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.product-detail-body {
+  padding: 26px 28px 28px;
+}
+
+.product-detail-body h1 {
+  margin: 0 0 11px;
+  font-size: 1.8rem;
+}
+
+.product-detail-description {
+  color: var(--color-text);
+  line-height: 1.65;
+  margin: 15px 0 0;
+  font-size: 0.95rem;
 }
 
 .product-detail-facts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 4px 12px;
-  margin: 16px 0;
+  display: flex;
+  gap: 44px;
+  margin: 24px 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .product-detail-facts dt {
   color: var(--color-muted);
+  font-size: 0.71rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 5px;
 }
 
 .product-detail-facts dd {
   margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
 }
 
 .detail-actions {
@@ -236,36 +653,119 @@ body {
   gap: 10px;
 }
 
-.dialog-overlay {
+.back-link {
+  display: inline-block;
+  color: var(--color-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 18px;
+  transition: color 0.12s ease;
+}
+
+.back-link:hover {
+  color: var(--color-primary);
+}
+
+/* ---------- Lightbox ---------- */
+
+.lightbox {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(24, 19, 15, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 30;
+  padding: 32px;
+  animation: page-enter 0.15s ease both;
+  cursor: zoom-out;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  cursor: default;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: none;
+  border: none;
+  color: #f8f2e8;
+  font-size: 2.2rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.lightbox-close:hover {
+  opacity: 1;
+}
+
+/* ---------- Confirm dialog ---------- */
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(36, 29, 24, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  padding: 20px;
 }
 
 .dialog {
   background: var(--color-surface);
-  border-radius: 10px;
-  padding: 20px;
+  border-radius: var(--radius-md);
+  padding: 24px;
   max-width: 360px;
+  box-shadow: var(--shadow-md);
+  animation: dialog-enter 0.15s ease both;
+}
+
+.dialog h3 {
+  margin: 0 0 8px;
+}
+
+.dialog p {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 0;
 }
 
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #16161a;
-    --color-surface: #1f1f24;
-    --color-border: #302f38;
-    --color-text: #ececee;
-    --color-muted: #9a99a2;
-    color-scheme: dark;
+@keyframes dialog-enter {
+  from { opacity: 0; transform: scale(0.97) translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 480px) {
+  .filter-row {
+    flex-direction: column;
+  }
+
+  .app-content {
+    padding: 24px 16px 56px;
+  }
+
+  .navbar {
+    padding: 14px 16px;
+  }
+
+  .navbar-user {
+    display: none;
   }
 }

@@ -1,5 +1,3 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export class ApiError extends Error {
   constructor(code, message) {
     super(message);
@@ -23,25 +21,27 @@ async function unwrap(res) {
   return json.data;
 }
 
-export async function apiGet(action, params = {}) {
-  const url = new URL(BASE_URL);
-  url.searchParams.set('action', action);
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v);
-  });
-  const res = await fetch(url.toString());
-  return unwrap(res);
-}
-
-export async function apiPost(action, payload) {
-  const url = new URL(BASE_URL);
-  url.searchParams.set('action', action);
-  const res = await fetch(url.toString(), {
+// Every call goes through our own same-origin /api/gas relay rather than hitting Apps
+// Script directly, for two reasons:
+//   1. Apps Script serves doPost responses via a redirect that browsers can't follow
+//      correctly cross-origin (they downgrade POST to GET), which breaks writes.
+//   2. The exec endpoint intermittently returns 404/HTML instead of the script's output
+//      (measured at roughly 1 in 3 requests). The relay retries, so a blip doesn't
+//      surface as a failed login or a missing product.
+// Reads and writes share this path so both get that retry behaviour.
+async function call(action, payload) {
+  const res = await fetch(`/api/gas?action=${encodeURIComponent(action)}`, {
     method: 'POST',
-    // text/plain avoids a CORS preflight Apps Script cannot answer — do not change this
-    // to application/json or add custom headers (e.g. Authorization).
-    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
   return unwrap(res);
+}
+
+export async function apiGet(action, params = {}) {
+  return call(action, params);
+}
+
+export async function apiPost(action, payload) {
+  return call(action, payload);
 }
