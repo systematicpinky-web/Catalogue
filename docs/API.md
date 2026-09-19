@@ -19,12 +19,14 @@ Error codes: `INVALID_CREDENTIALS`, `SESSION_EXPIRED`, `NOT_FOUND`, `VALIDATION_
 | `changePassword` | POST | yes | `{token, oldPassword, newPassword}` | `{}` |
 | `listProducts` | GET | yes | `{token, search?, category?}` | `{items: Product[], categories: string[]}` |
 | `getProduct` | GET | yes | `{token, id}` | `Product` |
-| `addProduct` | POST | yes | `{token, name, category?, description?, quantity?, value?, imageBase64?, imageMimeType?}` | `Product` |
-| `updateProduct` | POST | yes | `{token, id, name?, category?, description?, quantity?, value?, imageBase64?, imageMimeType?}` | `Product` |
+| `addProduct` | POST | yes | `{token, name, category?, description?, quantity?, value?, dfNumber?, imageBase64?, imageMimeType?}` | `Product` |
+| `updateProduct` | POST | yes | `{token, id, name?, category?, description?, quantity?, value?, dfNumber?, imageBase64?, imageMimeType?}` | `Product` |
 | `deleteProduct` | POST | yes | `{token, id}` | `{id}` (soft delete — sets status to `archived`) |
 | `uploadImage` | POST | yes | `{token, productId, imageBase64, imageMimeType}` | `{imageId, imageUrl}` |
 
-`Product`: `{id, name, category, description, quantity, value, imageId, imageUrl, status, createdAt, createdBy, updatedAt, updatedBy}`.
+`Product`: `{id, name, category, description, quantity, value, dfNumber, imageId, imageUrl, status, createdAt, createdBy, updatedAt, updatedBy}`.
+
+`dfNumber` (design family number) groups different colourways of the same design. `search` matches it in addition to `name`, so searching a DF number surfaces every colour in that family.
 
 ## Manual regression checklist (curl)
 

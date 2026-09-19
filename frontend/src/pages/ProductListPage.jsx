@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { listProducts } from '../api/products';
 import FilterBar from '../components/FilterBar';
@@ -10,6 +11,7 @@ const PAGE_SIZE = 24;
 
 export default function ProductListPage() {
   const { session } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const cached = getCachedProducts();
 
   const [items, setItems] = useState(cached?.items ?? []);
@@ -41,12 +43,27 @@ export default function ProductListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // A DF-tag click lands here as /?df=102. Fold it into the search box and drop the query
+  // param so subsequent typing/clearing behaves like any other search.
+  useEffect(() => {
+    const df = searchParams.get('df');
+    if (df) {
+      setSearch(df);
+      setSearchParams({}, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   // Filtering/sorting client-side is fine at catalogue scale, and the backend already
   // accepts search/category so this can move server-side later without an API change.
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     const list = items.filter((p) => {
-      if (term && !p.name?.toLowerCase().includes(term)) return false;
+      if (term) {
+        const matchesName = p.name?.toLowerCase().includes(term);
+        const matchesDf = p.dfNumber?.toLowerCase().includes(term);
+        if (!matchesName && !matchesDf) return false;
+      }
       if (category && p.category !== category) return false;
       return true;
     });

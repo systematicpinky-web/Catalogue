@@ -30,6 +30,7 @@ function toProduct_(row) {
     description: row.description,
     quantity: row.quantity,
     value: row.value,
+    dfNumber: row.dfNumber,
     imageId: row.imageId,
     imageUrl: normalizeImageUrl_(row.imageUrl),
     status: row.status,
@@ -47,8 +48,14 @@ function listProducts_(session, payload) {
   var search = String(payload.search || '').toLowerCase().trim();
   var category = String(payload.category || '').trim();
 
+  // A DF (design family) number groups colourways of the same design. Matching it here
+  // means typing a DF number into the same search box surfaces every colour in that family.
   var filtered = active.filter(function (r) {
-    if (search && String(r.name || '').toLowerCase().indexOf(search) === -1) return false;
+    if (search) {
+      var matchesName = String(r.name || '').toLowerCase().indexOf(search) !== -1;
+      var matchesDf = String(r.dfNumber || '').toLowerCase().indexOf(search) !== -1;
+      if (!matchesName && !matchesDf) return false;
+    }
     if (category && r.category !== category) return false;
     return true;
   });
@@ -92,6 +99,7 @@ function addProduct_(session, payload) {
       description: payload.description || '',
       quantity: payload.quantity || 0,
       value: payload.value || 0,
+      dfNumber: payload.dfNumber || '',
       imageId: image.imageId,
       imageUrl: image.imageUrl,
       status: 'active',
@@ -117,7 +125,7 @@ function updateProduct_(session, payload) {
       updatedAt: new Date().toISOString(),
       updatedBy: session.username
     };
-    ['name', 'category', 'description', 'quantity', 'value'].forEach(function (key) {
+    ['name', 'category', 'description', 'quantity', 'value', 'dfNumber'].forEach(function (key) {
       if (payload[key] !== undefined) fields[key] = payload[key];
     });
 

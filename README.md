@@ -18,7 +18,7 @@ Everything goes through the two serverless functions rather than calling Google 
 ## One-time Google setup
 
 1. **Sheet** with two tabs:
-   - `Products` — headers: `id, name, category, description, quantity, value, imageId, imageUrl, status, createdAt, createdBy, updatedAt, updatedBy`
+   - `Products` — headers: `id, name, category, description, quantity, value, dfNumber, imageId, imageUrl, status, createdAt, createdBy, updatedAt, updatedBy`
    - `Users` — headers: `username, passwordHash, salt, displayName, role, active, createdAt`
 2. **Drive folder** for product images.
 3. **Apps Script project**: paste the contents of `backend/src/*.js` into a new project at script.google.com (one file each), and replace `appsscript.json` with `backend/appsscript.json`.
@@ -50,6 +50,7 @@ Either through the app's **Add product** form (handles image upload automaticall
 - **`id`** must be filled and unique (any value — numeric ids work).
 - **`imageUrl`** accepts any Drive link shape, including the `/file/d/ID/view` one from "Copy link"; the backend normalizes it. The file must be shared as **"Anyone with the link"**.
 - **`status`** anything other than `archived` is treated as visible.
+- **`dfNumber`** (design family number): give identical designs in different colours the same value here. Searching that number in the app (or clicking a product's "DF" tag) surfaces every colourway in the family. Leave blank for one-off items.
 
 ## Scaling notes
 

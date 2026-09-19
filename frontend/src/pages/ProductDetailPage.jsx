@@ -48,7 +48,14 @@ export default function ProductDetailPage() {
 
         <div className="product-detail-body">
           <h1>{product.name}</h1>
-          {product.category && <span className="badge">{product.category}</span>}
+          <div className="product-detail-tags">
+            {product.category && <span className="badge">{product.category}</span>}
+            {product.dfNumber && (
+              <Link to={`/?df=${encodeURIComponent(product.dfNumber)}`} className="df-tag df-tag-inline">
+                DF {product.dfNumber} · view all colours
+              </Link>
+            )}
+          </div>
           {product.description && <p className="product-detail-description">{product.description}</p>}
 
           <dl className="product-detail-facts">

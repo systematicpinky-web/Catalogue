@@ -57,12 +57,15 @@ a {
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 12px;
 }
 
-.logo-mark {
-  color: var(--color-primary);
+.logo-mark-image {
+  height: 2.1em;
+  width: auto;
+  display: block;
   flex-shrink: 0;
+  mix-blend-mode: multiply;
 }
 
 .logo-text {
@@ -73,13 +76,17 @@ a {
   letter-spacing: 0.01em;
 }
 
-.logo-lg .logo-mark {
-  width: 1.5em;
-  height: 1.3em;
+.logo-lg .logo-mark-image {
+  height: 3.6em;
 }
 
 .logo-lg .logo-text {
-  font-size: 2rem;
+  font-size: 2.1rem;
+}
+
+.logo-lg {
+  flex-direction: column;
+  gap: 6px;
 }
 
 /* ---------- Navbar ---------- */
@@ -293,19 +300,56 @@ a {
 }
 
 .product-card {
+  position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  text-decoration: none;
-  color: var(--color-text);
-  display: block;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .product-card:hover {
   border-color: var(--color-border-strong);
   box-shadow: var(--shadow-md);
+}
+
+.product-card-link {
+  display: block;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.df-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.12s ease;
+}
+
+.df-tag:hover {
+  background: var(--color-primary-dark);
+}
+
+.product-detail-tags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.df-tag-inline {
+  position: static;
+  box-shadow: none;
 }
 
 .product-card-image {

@@ -5,7 +5,7 @@ import { getProduct, addProduct, updateProduct } from '../api/products';
 import ImageUpload from '../components/ImageUpload';
 import { clearProductsCache } from '../state/productsCache';
 
-const emptyForm = { name: '', category: '', description: '', quantity: 0, value: 0 };
+const emptyForm = { name: '', category: '', description: '', quantity: 0, value: 0, dfNumber: '' };
 
 export default function ProductFormPage() {
   const { id } = useParams(); // absent => add mode
@@ -28,6 +28,7 @@ export default function ProductFormPage() {
         description: p.description || '',
         quantity: p.quantity ?? 0,
         value: p.value ?? 0,
+        dfNumber: p.dfNumber || '',
       });
       setExistingImageUrl(p.imageUrl || '');
     });
@@ -69,10 +70,20 @@ export default function ProductFormPage() {
           Name
           <input value={form.name} onChange={(e) => setField('name', e.target.value)} required />
         </label>
-        <label>
-          Category
-          <input value={form.category} onChange={(e) => setField('category', e.target.value)} />
-        </label>
+        <div className="form-row">
+          <label>
+            Category
+            <input value={form.category} onChange={(e) => setField('category', e.target.value)} />
+          </label>
+          <label>
+            Design family (DF) no.
+            <input
+              value={form.dfNumber}
+              onChange={(e) => setField('dfNumber', e.target.value)}
+              placeholder="e.g. 102"
+            />
+          </label>
+        </div>
         <label>
           Description
           <textarea value={form.description} onChange={(e) => setField('description', e.target.value)} rows={4} />
