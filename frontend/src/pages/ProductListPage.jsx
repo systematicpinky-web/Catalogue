@@ -60,8 +60,10 @@ export default function ProductListPage() {
     const term = search.trim().toLowerCase();
     const list = items.filter((p) => {
       if (term) {
-        const matchesName = p.name?.toLowerCase().includes(term);
-        const matchesDf = p.dfNumber?.toLowerCase().includes(term);
+        // dfNumber (and occasionally name) can come back as a number when the sheet cell
+        // holds a bare numeric value, so coerce to string before comparing.
+        const matchesName = String(p.name || '').toLowerCase().includes(term);
+        const matchesDf = String(p.dfNumber || '').toLowerCase().includes(term);
         if (!matchesName && !matchesDf) return false;
       }
       if (category && p.category !== category) return false;
@@ -71,13 +73,13 @@ export default function ProductListPage() {
     return [...list].sort((a, b) => {
       switch (sort) {
         case 'name-desc':
-          return (b.name || '').localeCompare(a.name || '');
+          return String(b.name || '').localeCompare(String(a.name || ''));
         case 'newest':
-          return (b.createdAt || '').localeCompare(a.createdAt || '');
+          return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
         case 'qty-desc':
           return (b.quantity || 0) - (a.quantity || 0);
         default:
-          return (a.name || '').localeCompare(b.name || '');
+          return String(a.name || '').localeCompare(String(b.name || ''));
       }
     });
   }, [items, search, category, sort]);
