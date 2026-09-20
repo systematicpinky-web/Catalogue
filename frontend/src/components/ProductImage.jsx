@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 // remaining browser-side failure modes (dropped connection, a proxy error) so a blip shows a
 // placeholder rather than a broken-image icon, and fades images in once decoded instead of
 // letting them pop in.
-export default function ProductImage({ src, alt, className, placeholderClassName, onClick }) {
+export default function ProductImage({ src, alt, className, placeholderClassName, onClick, eager }) {
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -35,7 +35,8 @@ export default function ProductImage({ src, alt, className, placeholderClassName
       src={attemptSrc}
       alt={alt}
       className={`${className || ''} img-fade${loaded ? ' img-loaded' : ''}`}
-      loading="lazy"
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
       decoding="async"
       onLoad={() => setLoaded(true)}
       onError={handleError}

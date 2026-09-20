@@ -22,6 +22,34 @@ function sameId_(a, b) {
   return String(a) === String(b);
 }
 
+// readRows_(SHEET_PRODUCTS) does a full getRange().getValues() scan, which is the single
+// slowest thing in this backend and only grows with the catalogue. CacheService is shared
+// across every execution of the script (unlike the Vercel relay's per-instance cache), so a
+// short TTL here cuts most listProducts_/getProduct_ calls down to a cache hit instead of a
+// sheet read. Every write clears it, so it's never more than PRODUCTS_CACHE_TTL_SECONDS stale.
+var PRODUCTS_CACHE_KEY = 'products_rows_v1';
+var PRODUCTS_CACHE_TTL_SECONDS = 30;
+
+function getProductRows_() {
+  var cache = CacheService.getScriptCache();
+  var cached = cache.get(PRODUCTS_CACHE_KEY);
+  if (cached) return JSON.parse(cached);
+
+  var data = readRows_(SHEET_PRODUCTS);
+  try {
+    // CacheService values are capped at 100KB; a huge catalogue could exceed that, in which
+    // case this just no-ops and every call falls back to a fresh sheet read.
+    cache.put(PRODUCTS_CACHE_KEY, JSON.stringify(data.rows), PRODUCTS_CACHE_TTL_SECONDS);
+  } catch (err) {
+    // oversized or transient cache failure - reads still work, just uncached
+  }
+  return data.rows;
+}
+
+function invalidateProductRowsCache_() {
+  CacheService.getScriptCache().remove(PRODUCTS_CACHE_KEY);
+}
+
 function toProduct_(row) {
   return {
     id: row.id,
@@ -41,9 +69,25 @@ function toProduct_(row) {
   };
 }
 
+// The grid/list view never needs description, imageId, status, or the audit trail fields -
+// trimming them out shrinks both the JSON Apps Script builds and what crosses the wire on
+// every list load. Full detail still comes from toProduct_ via getProduct_.
+function toProductSummary_(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    category: row.category,
+    quantity: row.quantity,
+    value: row.value,
+    dfNumber: row.dfNumber,
+    imageUrl: normalizeImageUrl_(row.imageUrl),
+    createdAt: row.createdAt
+  };
+}
+
 function listProducts_(session, payload) {
-  var data = readRows_(SHEET_PRODUCTS);
-  var active = data.rows.filter(function (r) { return r.status !== 'archived'; });
+  var rows = getProductRows_();
+  var active = rows.filter(function (r) { return r.status !== 'archived'; });
 
   var search = String(payload.search || '').toLowerCase().trim();
   var category = String(payload.category || '').trim();
@@ -63,14 +107,14 @@ function listProducts_(session, payload) {
   var categories = Array.from(new Set(active.map(function (r) { return r.category; }).filter(Boolean)));
 
   return {
-    items: filtered.map(toProduct_),
+    items: filtered.map(toProductSummary_),
     categories: categories
   };
 }
 
 function getProduct_(session, payload) {
-  var data = readRows_(SHEET_PRODUCTS);
-  var row = data.rows.filter(function (r) { return sameId_(r.id, payload.id); })[0];
+  var rows = getProductRows_();
+  var row = rows.filter(function (r) { return sameId_(r.id, payload.id); })[0];
   if (!row) throw new ApiError_('NOT_FOUND', 'Product not found');
   return toProduct_(row);
 }
@@ -109,6 +153,7 @@ function addProduct_(session, payload) {
       updatedBy: session.username
     };
     appendRow_(SHEET_PRODUCTS, row);
+    invalidateProductRowsCache_();
     return toProduct_(row);
   });
 }
@@ -137,6 +182,7 @@ function updateProduct_(session, payload) {
     }
 
     updateRowFields_(SHEET_PRODUCTS, existing.__row, fields);
+    invalidateProductRowsCache_();
     return getProduct_(session, { id: payload.id });
   });
 }
@@ -154,6 +200,7 @@ function deleteProduct_(session, payload) {
       updatedAt: new Date().toISOString(),
       updatedBy: session.username
     });
+    invalidateProductRowsCache_();
     return { id: payload.id };
   });
 }
@@ -176,6 +223,7 @@ function uploadImage_(session, payload) {
       updatedAt: new Date().toISOString(),
       updatedBy: session.username
     });
+    invalidateProductRowsCache_();
     return image;
   });
 }

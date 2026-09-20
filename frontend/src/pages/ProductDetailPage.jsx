@@ -44,6 +44,7 @@ export default function ProductDetailPage() {
           className="product-detail-image product-detail-image-zoom"
           placeholderClassName="product-detail-image product-detail-placeholder"
           onClick={() => product.imageUrl && setLightboxOpen(true)}
+          eager
         />
 
         <div className="product-detail-body">
