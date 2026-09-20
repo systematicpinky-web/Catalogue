@@ -4,8 +4,14 @@
 
 Users are stored in the Google Sheet, not created via the app. To add a new user:
 
-1. **Generate credentials** — in Apps Script editor, open `Auth.gs` and run `hashPasswordForSeed('MyPassword123')` from the Run menu (▶️)
-2. **Copy the output** — check Execution log for printed `salt:` and `passwordHash:` values
+1. **Generate credentials** — the Apps Script Run button can't pass arguments, so add a throwaway wrapper function anywhere in `Auth.gs`:
+   ```js
+   function seedTemp() {
+     hashPasswordForSeed('MyPassword123');
+   }
+   ```
+   Select **`seedTemp`** (not `hashPasswordForSeed`) in the function dropdown at the top of the editor, then click **Run** (▶️). Delete `seedTemp` afterwards — it's just scratch code.
+2. **Copy the output** — check **Execution log** (View menu) for printed `salt:` and `passwordHash:` values
 3. **Add to Users sheet** — paste a new row with:
    - `username`: (e.g., `sarah`)
    - `displayName`: (e.g., `Sarah Chen`)
