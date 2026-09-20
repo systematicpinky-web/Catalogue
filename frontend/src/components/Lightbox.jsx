@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export default function Lightbox({ src, alt, onClose }) {
+export default function Lightbox({ src, alt, downloadSrc, downloadName, onClose }) {
   useEffect(() => {
     if (!src) return undefined;
 
@@ -23,7 +23,20 @@ export default function Lightbox({ src, alt, onClose }) {
 
   return (
     <div className="lightbox" role="dialog" aria-modal="true" aria-label={alt} onClick={onClose}>
-      <button type="button" className="lightbox-close" onClick={onClose} aria-label="Close">×</button>
+      <div className="lightbox-toolbar">
+        {downloadSrc && (
+          <a
+            href={downloadSrc}
+            download={downloadName}
+            className="lightbox-download"
+            onClick={(e) => e.stopPropagation()}
+            title="Download full-size photo"
+          >
+            Download
+          </a>
+        )}
+        <button type="button" className="lightbox-close" onClick={onClose} aria-label="Close">×</button>
+      </div>
       <img src={src} alt={alt} className="lightbox-image" onClick={(e) => e.stopPropagation()} />
     </div>
   );

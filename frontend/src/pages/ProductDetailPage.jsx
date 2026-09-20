@@ -6,7 +6,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import ProductImage from '../components/ProductImage';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Lightbox from '../components/Lightbox';
-import { imageSrc } from '../utils/driveImage';
+import { imageSrc, downloadImageSrc, downloadFilename } from '../utils/driveImage';
 import { clearProductsCache } from '../state/productsCache';
 
 export default function ProductDetailPage() {
@@ -71,6 +71,15 @@ export default function ProductDetailPage() {
           </dl>
 
           <div className="detail-actions">
+            {product.imageUrl && (
+              <a
+                href={downloadImageSrc(product.imageUrl)}
+                download={downloadFilename(product)}
+                className="btn"
+              >
+                Download photo
+              </a>
+            )}
             <Link to={`/products/${id}/edit`} className="btn btn-primary">Edit</Link>
             <button type="button" className="btn btn-danger" onClick={() => setConfirmOpen(true)}>Delete</button>
           </div>
@@ -81,6 +90,8 @@ export default function ProductDetailPage() {
         <Lightbox
           src={imageSrc(product.imageUrl, 1000)}
           alt={product.name}
+          downloadSrc={downloadImageSrc(product.imageUrl)}
+          downloadName={downloadFilename(product)}
           onClose={() => setLightboxOpen(false)}
         />
       )}

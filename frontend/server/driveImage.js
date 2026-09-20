@@ -5,7 +5,7 @@
 // Only ever build the upstream URL from a validated file ID — never from a client-supplied
 // URL — so this endpoint can't be pointed at arbitrary hosts (SSRF).
 const ID_PATTERN = /^[A-Za-z0-9_-]{10,100}$/;
-const ALLOWED_WIDTHS = new Set([400, 1000]);
+const ALLOWED_WIDTHS = new Set([400, 1000, 2000]);
 
 const MAX_ATTEMPTS = 3;
 

@@ -735,10 +735,34 @@ a {
   cursor: default;
 }
 
-.lightbox-close {
+.lightbox-toolbar {
   position: absolute;
   top: 18px;
   right: 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.lightbox-download {
+  color: #f8f2e8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border: 1px solid rgba(248, 242, 232, 0.5);
+  border-radius: 999px;
+  padding: 7px 16px;
+  opacity: 0.9;
+  transition: opacity 0.12s ease, background-color 0.12s ease;
+}
+
+.lightbox-download:hover {
+  opacity: 1;
+  background: rgba(248, 242, 232, 0.12);
+}
+
+.lightbox-close {
   background: none;
   border: none;
   color: #f8f2e8;
